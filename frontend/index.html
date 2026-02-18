@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head> <style>
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(circle at top, #0f1c2e, #050b14 70%);
+    color: white;
+}
+
+h1 {
+    text-align: center;
+    font-size: 42px;
+    color: gold;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px rgba(255,215,0,0.4);
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px;
+}
+
+.stats-panel {
+    background: linear-gradient(145deg, #16213a, #0f192b);
+    padding: 22px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,215,0,0.15);
+    font-size: 16px;
+}
+
+
+.card {
+    background: linear-gradient(145deg, #162238, #0f192b);
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+.buy { color: #00ff88; font-weight: bold; }
+.sell { color: #ff4d4d; font-weight: bold; }
+
+.progress {
+    height: 12px;
+    border-radius: 10px;
+    background: #1f2a3d;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #00cc66);
+}
+</style>
+
+<meta charset="UTF-8">
+<title>Centurion Legacy™ Elite Signals</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f1117;
+    color: white;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px;
+}
+
+h1 {
+    text-align: center;
+    color: gold;
+    margin-bottom: 40px;
+}
+
+.card {
+    background: #141824;
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+}
+
+.signal-buy {
+    color: #00ff88;
+    font-weight: bold;
+}
+
+.signal-sell {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+.progress {
+    height: 10px;
+    background: #222;
+    border-radius: 6px;
+    margin: 10px 0 15px 0;
+}
+
+.progress-bar {
+    height: 10px;
+    background: #00ff88;
+    border-radius: 6px;
+}
+
+.stats-panel {
+    background:#141824;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:30px;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Centurion Legacy™ Elite Signals</h1>
+
+<div class="stats-panel">
+<div>Total Signals: <b id="totalSignals">-</b></div>
+<div>Average Confidence: <b id="avgConfidence">-</b></div>
+<div>Plan: <b style="color:gold;">PREMIUM</b></div>
+</div>
+
+<div id="signalsContainer"></div>
+
+</div>
+
+<script>
+
+async function loadSignals() {
+
+    const res = await fetch("http://127.0.0.1:8000/signals?api_key=CL-PREMIUM-001");
+    const data = await res.json();
+
+    const perf = await fetch("http://127.0.0.1:8000/performance?api_key=CL-PREMIUM-001");
+    const perfData = await perf.json();
+
+    document.getElementById("totalSignals").innerText = perfData.total_signals;
+    document.getElementById("avgConfidence").innerText = perfData.average_confidence.toFixed(1) + "%";
+
+
+    const container = document.getElementById("signalsContainer");
+    container.innerHTML = "";
+
+    for (const symbol in data) {
+const signal = data[symbol];
+
+let signalColor = "#999";
+if (signal.signal === "BUY") signalColor = "#00ff99";
+if (signal.signal === "SELL") signalColor = "#ff4d4d";
+
+container.innerHTML += `
+    <div style="
+    background:#111827;
+    padding:25px;
+    border:${borderStyle};
+    box-shadow:${glow}, 0 10px 30px rgba(0,0,0,0.6);
+
+        border-radius:15px;
+        margin-bottom:30px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    ">
+        <h2 style="font-size:24px;margin-bottom:10px;">${symbol}</h2>
+
+        <div style="opacity:0.8;margin-bottom:8px;">
+            Plan: <b>${signal.plan}</b>
+        </div>
+
+        <div style="margin-bottom:10px;">
+            Signal: <b style="color:${signalColor};">${signal.signal}</b>
+        </div>
+
+        <div style="margin-bottom:8px;">
+            Confidence: ${signal.confidence}%
+        </div>
+
+        <div style="
+            height:8px;
+            background:#333;
+            border-radius:10px;
+            overflow:hidden;
+            margin-bottom:15px;
+        ">
+            <div style="
+                width:${signal.confidence}%;
+                background:linear-gradient(90deg,#00ff99,#00cc66);
+                height:100%;
+            "></div>
+        </div>
+
+        <div style="opacity:0.8;">Trend Strength: ${signal.trend_strength}</div>
+        <div style="opacity:0.8;">Regime: ${signal.regime}</div>
+
+        <div style="margin-top:12px;font-size:14px;">
+            Entry: ${signal.entry} <br>
+            Stop: ${signal.stop_loss ?? "-"} <br>
+            Take Profit: ${signal.take_profit ?? "-"}
+        </div>
+    </div>
+`;
+
+        const s = data[symbol];
+let borderStyle = "2px solid #444";
+let glow = "none";
+
+if (signal.plan === "PREMIUM") {
+    borderStyle = "2px solid gold";
+    glow = "0 0 20px rgba(255,215,0,0.5)";
+}
+
+        const signalClass = s.signal === "BUY" ? "signal-buy" : "signal-sell";
+
+        container.innerHTML += `
+        <div class="card">
+            <h2>${symbol}</h2>
+            <p>Plan: ${s.plan}</p>
+            <p>Signal: <span class="${signalClass}">${s.signal}</span></p>
+            <p>Confidence: ${s.confidence}%</p>
+            <div class="progress">
+                <div class="progress-bar" style="width:${s.confidence}%"></div>
+            </div>
+            <p>Trend Strength: ${s.trend_strength}</p>
+            <p>Regime: ${s.regime}</p>
+            <p>Entry: ${s.entry}</p>
+            <p>Stop: ${s.stop_loss ?? "-"}</p>
+            <p>Take Profit: ${s.take_profit ?? "-"}</p>
+        </div>
+        `;
+    }
+}
+
+loadSignals();
+
+</script>
+
+</body>
+</html>
+document.querySelector(".stats-panel div:last-child b").innerText = perfData.plan ?? "PREMIUM";
+
