@@ -139,6 +139,15 @@ h1 {
 
 <h1>Centurion Legacy™ Elite Signals</h1>
 
+<div style="text-align:center;margin-bottom:20px;">
+    <input id="apiInput" placeholder="Enter API Key"
+           style="padding:10px;border-radius:6px;border:none;width:250px;">
+    <button onclick="loadSignals()"
+            style="padding:10px 15px;border:none;border-radius:6px;background:gold;font-weight:bold;">
+        Load Signals
+    </button>
+</div>
+
 <div class="stats-panel">
 <div>Total Signals: <b id="totalSignals">-</b></div>
 <div>Average Confidence: <b id="avgConfidence">-</b></div>
@@ -153,11 +162,18 @@ h1 {
 
 async function loadSignals() {
 
-    const res = await fetch("http://127.0.0.1:8000/signals?api_key=CL-PREMIUM-001");
-    const data = await res.json();
+    const key = document.getElementById("apiInput").value;
 
-    const perf = await fetch("http://127.0.0.1:8000/performance?api_key=CL-PREMIUM-001");
-    const perfData = await perf.json();
+if (!key) {
+    alert("Please enter API key");
+    return;
+}
+
+const res = await fetch(`https://centurion-legacy.onrender.com/signals?api_key=${key}`);
+const data = await res.json();
+
+const perf = await fetch(`https://centurion-legacy.onrender.com/performance?api_key=${key}`);
+const perfData = await perf.json();
 
     document.getElementById("totalSignals").innerText = perfData.total_signals;
     document.getElementById("avgConfidence").innerText = perfData.average_confidence.toFixed(1) + "%";
@@ -259,5 +275,4 @@ loadSignals();
 
 </body>
 </html>
-document.querySelector(".stats-panel div:last-child b").innerText = perfData.plan ?? "PREMIUM";
 

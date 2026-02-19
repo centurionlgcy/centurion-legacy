@@ -1,0 +1,9 @@
+Script started on Wed Feb 18 04:00:54 2026
+[1m[7m%[27m[1m[0m                                                                                           ]7;file://alpha-systems/Users/karina/centurion_legacy/centurion_signals[0m[27m[24m[Jkarina@alpha-systems centurion_signals % [K[?2004heexit[?2004l
+
+Saving session...
+...copying shared history...
+...saving history...truncating history files...
+...completed.
+
+Script done on Wed Feb 18 04:01:03 2026
